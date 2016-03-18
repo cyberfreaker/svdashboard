@@ -1,0 +1,57 @@
+#!/bin/bash
+cleardb="/scripts/clearaggrdb.pl"
+$cleardb
+filerlst=( $(/usr/local/bin/mdb duties=snapvault.dst return name|/pkg/sysadmin/scripts/mdbrotate))
+for i in "${filerlst[@]}"
+do
+
+
+pth1="/scripts/snapaggrsize.pl $i"
+
+$pth1
+sleep 1
+done
+
+#!/bin/bash
+cleardb="/scripts/clearsmdb.pl"
+$cleardb
+filerlst=( $(/usr/local/bin/mdb duties=snapmirror.dst return name|/pkg/sysadmin/scripts/mdbrotate))
+for i in "${filerlst[@]}"
+do
+
+
+pth="/scripts/snapmirror.pl $i"
+
+$pth
+sleep 1
+done
+
+#!/bin/bash
+cleardb="/scripts/cleardb.pl"
+$cleardb
+filerlst=( $(/usr/local/bin/mdb duties=snapvault.dst site!=rtp return name|/pkg/sysadmin/scripts/mdbrotate))
+for i in "${filerlst[@]}"
+do
+
+
+pth="/scripts/snapvault.pl $i"
+
+$pth
+sleep 1
+done
+
+#!/bin/bash
+cleardb="/scripts/clearvsdb.pl"
+$cleardb
+filerlst=( $(/usr/local/bin/mdb duties=snapvault.dst return name|/pkg/sysadmin/scripts/mdbrotate))
+for i in "${filerlst[@]}"
+do
+
+
+pth1="/scripts/snapvsize.pl $i"
+
+$pth1
+sleep 1
+done
+
+mysql -u netapp -pnetapp snaptest </scripts/mailquery.sql |mail -s 'TOp Aggregates with Less free space' radhakri@qti.qualcom.com
